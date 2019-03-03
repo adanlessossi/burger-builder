@@ -71,7 +71,7 @@ module.exports = function(webpackEnv) {
 			isEnvProduction && {
 				loader: MiniCssExtractPlugin.loader,
 				options: Object.assign(
-					{ modules: true, localIdentName: '[name]__[local]__[hash:base64:5]' },
+					{},
 					shouldUseRelativeAssetPaths ? { publicPath: '../../' } : undefined
 				)
 			},
@@ -391,6 +391,7 @@ module.exports = function(webpackEnv) {
 							exclude: cssModuleRegex,
 							use: getStyleLoaders({
 								importLoaders: 1,
+								modules: true,
 								localIdentName: '[name]__[local]__[hash:base64:5]',
 								sourceMap: isEnvProduction
 									? shouldUseSourceMap
@@ -408,6 +409,7 @@ module.exports = function(webpackEnv) {
 							test: cssModuleRegex,
 							use: getStyleLoaders({
 								importLoaders: 1,
+								modules: true,
 								sourceMap: isEnvProduction
 									? shouldUseSourceMap
 									: isEnvDevelopment,
