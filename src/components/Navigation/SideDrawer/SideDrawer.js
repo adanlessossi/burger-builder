@@ -2,7 +2,7 @@ import React from 'react';
 
 import Logo from '../../Logo/Logo';
 import Backdrop from '../../UI/Backdrop/Backdrop';
-import Aux from '../../../hoc/Auxiliary';
+import Aux from '../../../hoc/Auxiliary/Auxiliary';
 import NavigationItems from '../NavigationItems/NavigationItems';
 
 // @ts-ignore
