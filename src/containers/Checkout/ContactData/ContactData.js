@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { Component } from 'react';
 import axios from '../../../axios-orders';
+import { connect } from 'react-redux';
 
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
@@ -95,70 +96,86 @@ class ContactData extends Component {
 		formIsValid: false
 	};
 
-	orderHanler = event => {
+	orderHandler = event => {
 		event.preventDefault();
 		this.setState({ loading: true });
 		const formData = {};
-		for (let inputIdentifier in this.state.orderForm) {
-			formData[inputIdentifier] = this.state.orderForm[inputIdentifier].value;
+		for (let formElementIdentifier in this.state.orderForm) {
+			formData[formElementIdentifier] = this.state.orderForm[
+				formElementIdentifier
+			].value;
 		}
 		const order = {
-			ingredients: this.props.ingredients,
+			ingredients: this.props.ings,
 			price: this.props.price,
 			orderData: formData
 		};
-
 		axios
 			.post('/orders.json', order)
 			.then(response => {
-				this.setState({ loding: false });
+				this.setState({ loading: false });
 				this.props.history.push('/');
 			})
 			.catch(error => {
-				console.log(error);
-				this.setState({ loding: false });
+				this.setState({ loading: false });
 			});
 	};
 
-	checkValidity = (value, rule) => {
+	checkValidity(value, rules) {
 		let isValid = true;
-		if (!rule) {
+		if (!rules) {
 			return true;
 		}
-		if (rule.required) {
+
+		if (rules.required) {
 			isValid = value.trim() !== '' && isValid;
 		}
-		if (rule.minLength) {
-			isValid = value.length >= rule.minLength && isValid;
+
+		if (rules.minLength) {
+			isValid = value.length >= rules.minLength && isValid;
 		}
-		if (rule.maxLength) {
-			isValid = value.length <= rule.maxLength && isValid;
+
+		if (rules.maxLength) {
+			isValid = value.length <= rules.maxLength && isValid;
 		}
+
+		if (rules.isEmail) {
+			const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+			isValid = pattern.test(value) && isValid;
+		}
+
+		if (rules.isNumeric) {
+			const pattern = /^\d+$/;
+			isValid = pattern.test(value) && isValid;
+		}
+
 		return isValid;
-	};
+	}
 
 	inputChangedHandler = (event, inputIdentifier) => {
 		const updatedOrderForm = {
 			...this.state.orderForm
 		};
-		const updateFormElement = {
+		const updatedFormElement = {
 			...updatedOrderForm[inputIdentifier]
 		};
-		updateFormElement.value = event.target.value;
-		updateFormElement.valid = this.checkValidity(
-			updateFormElement.value,
-			updateFormElement.validation
+		updatedFormElement.value = event.target.value;
+		updatedFormElement.valid = this.checkValidity(
+			updatedFormElement.value,
+			updatedFormElement.validation
 		);
-		updateFormElement.touched = true;
-		updatedOrderForm[inputIdentifier] = updateFormElement;
+		updatedFormElement.touched = true;
+		updatedOrderForm[inputIdentifier] = updatedFormElement;
+
 		let formIsValid = true;
-		for (let inputIdentifier in updateFormElement) {
-			formIsValid = updateFormElement[inputIdentifier].valid && formIsValid;
+		for (let inputIdentifier in updatedOrderForm) {
+			formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
 		}
 		this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
 	};
 
 	render() {
+		console.log(this.state);
 		const formElementsArray = [];
 		for (let key in this.state.orderForm) {
 			formElementsArray.push({ id: key, config: this.state.orderForm[key] });
@@ -194,4 +211,11 @@ class ContactData extends Component {
 	}
 }
 
-export default ContactData;
+const mapStateToProps = state => {
+	return {
+		ings: state.ingredients,
+		price: state.totalPrice
+	};
+};
+
+export default connect(mapStateToProps)(ContactData);

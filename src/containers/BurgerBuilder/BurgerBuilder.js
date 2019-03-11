@@ -52,20 +52,8 @@ class BurgerBuilder extends Component {
 
 	continuePurchaseHandler = () => {
 		console.log('Continued');
-		const queryParams = [];
-		for (let i in this.state.ingredients) {
-			queryParams.push(
-				encodeURIComponent(i) +
-					'=' +
-					encodeURIComponent(this.state.ingredients[i])
-			);
-		}
-		queryParams.push('price=' + this.state.totalPrice);
-		const queryString = queryParams.join('&');
-		this.props.history.push({
-			pathname: '/checkout',
-			search: '?' + queryString
-		});
+
+		this.props.history.push('/checkout');
 	};
 
 	render() {
@@ -77,6 +65,14 @@ class BurgerBuilder extends Component {
 			disabledInfo[key] = disabledInfo[key] <= 0;
 		}
 		let orderSummary = null;
+		if (this.state.loading) {
+			orderSummary = <Spinner />;
+		}
+		let burger = this.props.ings ? (
+			<p>Problem loading Ingredients</p>
+		) : (
+			<Spinner />
+		);
 		if (this.props.ings) {
 			orderSummary = (
 				<OrderSummary
@@ -88,14 +84,6 @@ class BurgerBuilder extends Component {
 			);
 		}
 
-		if (this.state.loading) {
-			orderSummary = <Spinner />;
-		}
-		let burger = this.props.ings ? (
-			<p>Problem loading Ingredients</p>
-		) : (
-			<Spinner />
-		);
 		if (this.props.ings) {
 			burger = (
 				<Aux>
