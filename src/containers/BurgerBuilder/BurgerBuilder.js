@@ -13,7 +13,7 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 
-class BurgerBuilder extends Component {
+export class BurgerBuilder extends Component {
 	state = {
 		purchasing: false
 	};
@@ -69,7 +69,7 @@ class BurgerBuilder extends Component {
 			orderSummary = (
 				<OrderSummary
 					ingredients={this.props.ings}
-					price={this.props.price.toFixed(2)}
+					price={this.props.price}
 					cancelPurchase={this.cancelPurchaseHandler}
 					continuePurchase={this.continuePurchaseHandler}
 				/>

@@ -11,13 +11,24 @@ configure({
 });
 
 describe('<NavigationItems />', () => {
+	let wrapper;
+	beforeEach(() => {
+		wrapper = shallow(<NavigationItems />);
+	});
 	it('should show two <NavigationItem /> if not authenticated', () => {
-		const wrapper = shallow(<NavigationItems />);
 		expect(wrapper.find(NavigationItem)).toHaveLength(2);
 	});
 
 	it('should show tree <NavigationItem /> if authenticated', () => {
-		const wrapper = shallow(<NavigationItems isAuthenticated />);
+		//wrapper = shallow(<NavigationItems isAuthenticated />);
+		wrapper.setProps({ isAuthenticated: true });
 		expect(wrapper.find(NavigationItem)).toHaveLength(3);
+	});
+
+	it('should show exact one <NavigationItem /> if authenticated', () => {
+		wrapper.setProps({ isAuthenticated: true });
+		expect(
+			wrapper.contains(<NavigationItem link='/logout'>Logout</NavigationItem>)
+		).toEqual(true);
 	});
 });
